@@ -3,6 +3,8 @@ import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
 import Post, { PostProps } from "components/Post"
 import prisma from 'lib/prisma'
+import { signOut, useSession } from 'next-auth/react';
+
 
 export const getStaticProps: GetStaticProps = async () => {
   const feed = await prisma.post.findMany({
@@ -24,10 +26,12 @@ type Props = {
 }
 
 const Blog: React.FC<Props> = (props) => {
+  const { data: session, status } = useSession();
+  const feedName = session ? session.user?.name ?? session.user?.email : 'Public';
   return (
     <Layout>
       <div className="page">
-        <h1>Public Feed</h1>
+        <h1>{`${feedName} Feed`}</h1>
         <main>
           {props.feed.map((post) => (
             <div key={post.id} className="post">
