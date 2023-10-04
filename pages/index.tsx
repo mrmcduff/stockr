@@ -4,6 +4,7 @@ import Layout from "../components/Layout"
 import Post, { PostProps } from "components/Post"
 import prisma from 'lib/prisma'
 import { signOut, useSession } from 'next-auth/react';
+import useSWR from "swr"
 
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -28,10 +29,25 @@ type Props = {
 const Blog: React.FC<Props> = (props) => {
   const { data: session, status } = useSession();
   const feedName = session ? session.user?.name ?? session.user?.email : 'Public';
+
+  const fetchFunction = async () => {
+    const getUrl = `/api/stock/AAPL`
+
+    console.log('calling function');
+    const apiResponse = await fetch(getUrl).catch(error => console.log('error in api', error));
+    if (apiResponse) {
+      const output = await apiResponse.json();
+      console.log(output);
+    }
+  }
+  const handleClick = () => {
+    fetchFunction();
+  }
   return (
     <Layout>
       <div className="page">
         <h1>{`${feedName} Feed`}</h1>
+        <button onClick={handleClick}>Go fetch</button>
         <main>
           {props.feed.map((post) => (
             <div key={post.id} className="post">
