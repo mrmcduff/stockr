@@ -1,10 +1,12 @@
-import React from "react"
+import React, { useState } from "react"
 import { GetStaticProps } from "next"
 import Layout from "../components/Layout"
 import Post, { PostProps } from "components/Post"
 import prisma from 'lib/prisma'
 import { signOut, useSession } from 'next-auth/react';
 import useSWR from "swr"
+import { DailyResponse } from "alphavantage-wrapper-ts/dist/stock-time-series"
+import { DailyWindow } from "components/DailyWindow"
 
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -29,25 +31,28 @@ type Props = {
 const Blog: React.FC<Props> = (props) => {
   const { data: session, status } = useSession();
   const feedName = session ? session.user?.name ?? session.user?.email : 'Public';
+  const [displayedData, setDisplayedata] = useState<DailyResponse | null>(null);
 
   const fetchFunction = async () => {
     const getUrl = `/api/stock/AAPL`
 
-    console.log('calling function');
     const apiResponse = await fetch(getUrl).catch(error => console.log('error in api', error));
     if (apiResponse) {
       const output = await apiResponse.json();
+      setDisplayedata(output);
       console.log(output);
     }
   }
   const handleClick = () => {
     fetchFunction();
   }
+  console.log(displayedData);
   return (
     <Layout>
       <div className="page">
         <h1>{`${feedName} Feed`}</h1>
         <button onClick={handleClick}>Go fetch</button>
+        {displayedData ? <DailyWindow stockData={displayedData} symbol={ displayedData.metadata.symbol} /> : null}
         <main>
           {props.feed.map((post) => (
             <div key={post.id} className="post">
