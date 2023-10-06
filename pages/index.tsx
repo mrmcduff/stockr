@@ -7,6 +7,7 @@ import { signOut, useSession } from 'next-auth/react';
 import useSWR from "swr"
 import { DailyResponse } from "alphavantage-wrapper-ts/dist/stock-time-series"
 import { DailyWindow } from "components/DailyWindow"
+import { getStockInfo, getStockSymbols } from "utils/stocks"
 
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -43,6 +44,10 @@ const Blog: React.FC<Props> = (props) => {
       console.log(output);
     }
   }
+  const stockList = getStockSymbols();
+  const stockInfo = getStockInfo();
+  console.log(stockList);
+  console.log(stockInfo);
   const handleClick = () => {
     fetchFunction();
   }

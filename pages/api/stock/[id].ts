@@ -6,39 +6,16 @@ import AlphaVantage, {
   DataType,
   StockTimeSeries,
 } from 'alphavantage-wrapper-ts';
+import { allowCors } from 'utils/allowCors';
+import { getAv } from 'utils/alphavantageSingleton';
 
-
-const av = new AlphaVantage({ apikey: process.env.ALPHAVANTAGE_API_KEY });
 
 // GET /api/stock/:id
-// Initializing the cors middleware
-// You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
-const cors = Cors({
-  methods: ['POST', 'GET', 'HEAD'],
-})
-
-// Helper method to wait for a middleware to execute before continuing
-// And to throw an error when an error happens in a middleware
-function runMiddleware(
-  req: NextApiRequest,
-  res: NextApiResponse,
-  fn: Function
-) {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) {
-        return reject(result)
-      }
-
-      return resolve(result)
-    })
-  })
-}
-
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
 
   // Run the middleware
-  await runMiddleware(req, res, cors);
+  await allowCors(req, res);
+  const av = getAv();
   const symbol = Array.isArray(req.query.id) ? req.query.id[0] : req.query.id;
   const wrappedOutput = await av.stockTimeSeries.daily({ symbol, datatype: DataType.JSON });
   // const getUrl =
@@ -47,16 +24,4 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   // const apiResponse = await (await fetch(getUrl)).json();
 
   res.json(wrappedOutput);
-  // if (data) {
-  //   console.log('in the api handler');
-  //   console.log('data', data);
-  // }
-  // const post = await prisma.post.update({
-  //   where: { id: postId },
-  //   data: { published: true },
-  // });
-  // if (error) {
-  //   throw new Error(error);
-  // }
-  // res(data);
 }
