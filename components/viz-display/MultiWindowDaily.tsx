@@ -37,7 +37,7 @@ export const MultiWindowDaily: React.FC<MultiWindowDailyProps> = ({ graphData })
       <YAxis />
       <XAxis dataKey="date" {...xAxisArgs} />
       {graphData.map(gd => {
-        return <Line type="monotone" dataKey={gd.symbol} stroke={gd.color} />
+        return <Line type="monotone" dataKey={gd.symbol} key={`${gd.symbol}-${gd.color}`} stroke={gd.color} />
       })}
       <Tooltip labelFormatter={timeFormat('%a %b %d')}/>
     </LineChart>
