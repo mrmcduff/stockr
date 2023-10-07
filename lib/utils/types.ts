@@ -1,3 +1,4 @@
+import { StockTimeSeries } from "alphavantage-wrapper-ts";
 
 export interface GraphTimeSeries {
   id: string | number;
@@ -10,4 +11,19 @@ export interface GraphTimeSeries {
 export interface TimeSeriesDatum {
   date: number;
   [key: string]: number;
+}
+
+export interface DailyMultiResponse {
+  graphData: {
+    symbol: string,
+    data: StockTimeSeries.DailyResponse,
+    color: string,
+  }[]
+}
+export interface DailyMultiGraphData {
+    graphData: {
+    symbol: string,
+    data: TimeSeriesDatum[],
+    color: string,
+  }[]
 }
