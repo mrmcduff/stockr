@@ -8,6 +8,8 @@ import useSWR from "swr"
 import { DailyResponse } from "alphavantage-wrapper-ts/dist/stock-time-series"
 import { DailyWindow } from "components/DailyWindow"
 import { getStockInfo, getStockSymbols } from "utils/stocks"
+import { Button } from "@mantine/core"
+import { GraphDisplayArea } from "components/viz-display/GraphDisplayArea"
 
 
 export const getStaticProps: GetStaticProps = async () => {
@@ -32,32 +34,12 @@ type Props = {
 const Blog: React.FC<Props> = (props) => {
   const { data: session, status } = useSession();
   const feedName = session ? session.user?.name ?? session.user?.email : 'Public';
-  const [displayedData, setDisplayedata] = useState<DailyResponse | null>(null);
 
-  const fetchFunction = async () => {
-    const getUrl = `/api/stock/AAPL`
-
-    const apiResponse = await fetch(getUrl).catch(error => console.log('error in api', error));
-    if (apiResponse) {
-      const output = await apiResponse.json();
-      setDisplayedata(output);
-      console.log(output);
-    }
-  }
-  const stockList = getStockSymbols();
-  const stockInfo = getStockInfo();
-  console.log(stockList);
-  console.log(stockInfo);
-  const handleClick = () => {
-    fetchFunction();
-  }
-  console.log(displayedData);
   return (
     <Layout>
       <div className="page">
         <h1>{`${feedName} Feed`}</h1>
-        <button onClick={handleClick}>Go fetch</button>
-        {displayedData ? <DailyWindow stockData={displayedData} symbol={ displayedData.metadata.symbol} /> : null}
+        <GraphDisplayArea />
         <main>
           {props.feed.map((post) => (
             <div key={post.id} className="post">
