@@ -1,6 +1,6 @@
 import { StockTimeSeries } from "alphavantage-wrapper-ts";
 import { convertDailyAlphaToRecharts } from "lib/utils/convert";
-import { LineChart, XAxis, Line, Tooltip, XAxisProps } from "recharts";
+import { LineChart, XAxis, Line, Tooltip, XAxisProps, ComposedChart } from "recharts";
 import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
 import { timeDay } from 'd3-time';
@@ -25,10 +25,10 @@ export const DailyWindow: React.FC<DailyWindowProps> = ({ symbol, stockData }) =
     tickFormatter: timeFormat('%a %b %d')
   };
   return (
-    <LineChart data={reData} width={730} height={250} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+    <ComposedChart data={reData} width={730} height={250} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
       <XAxis dataKey="date" {...xAxisArgs} />
       <Line type="monotone" dataKey={symbol} stroke="#8884d8" />
       <Tooltip labelFormatter={timeFormat('%a %b %d')}/>
-    </LineChart>
+    </ComposedChart>
   )
 }

@@ -1,6 +1,6 @@
 import { StockTimeSeries } from "alphavantage-wrapper-ts";
-import { createRechartsDataFromResponse } from "lib/utils/convert";
-import { LineChart, XAxis, Line, Tooltip, XAxisProps, YAxis } from "recharts";
+import { createNestedRechartsDataFromResponse, createRechartsDataFromResponse } from "lib/utils/convert";
+import { XAxis, Line, Tooltip, XAxisProps, YAxis, ComposedChart } from "recharts";
 import { scaleTime } from 'd3-scale';
 import { timeFormat } from 'd3-time-format';
 import { timeDay } from 'd3-time';
@@ -15,12 +15,12 @@ export interface MultiWindowDailyProps {
 }
 
 export const MultiWindowDaily: React.FC<MultiWindowDailyProps> = ({ graphData }) => {
-  const reData = createRechartsDataFromResponse({ graphData })
-  console.log('reData', reData);
-  if (!reData || reData.length === 0) {
+  const reDataNested = createNestedRechartsDataFromResponse({ graphData });
+  console.log('nested', reDataNested);
+  if (!reDataNested || reDataNested.length === 0) {
     return null;
   }
-  const dateValues = reData.map(rd => rd.date);
+  const dateValues = reDataNested.map(rd => rd.date);
   console.log(new Date(dateValues[0]));
   const timeScale = scaleTime().domain([Math.min(...dateValues), Math.max(...dateValues)]);
 
@@ -33,13 +33,13 @@ export const MultiWindowDaily: React.FC<MultiWindowDailyProps> = ({ graphData })
   };
   console.log('graphData', graphData);
   return (
-    <LineChart data={reData} width={730} height={250} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+    <ComposedChart data={reDataNested} width={730} height={250} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
       <YAxis />
       <XAxis dataKey="date" {...xAxisArgs} />
       {graphData.map(gd => {
-        return <Line type="monotone" dataKey={gd.symbol} key={`${gd.symbol}-${gd.color}`} stroke={gd.color} />
+        return <Line type="monotone" dataKey={`values.${gd.symbol}`} key={`${gd.symbol}-${gd.color}`} stroke={gd.color} />
       })}
       <Tooltip labelFormatter={timeFormat('%a %b %d')}/>
-    </LineChart>
+    </ComposedChart>
   )
 }
