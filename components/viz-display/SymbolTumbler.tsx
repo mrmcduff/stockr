@@ -15,6 +15,7 @@ export const SymbolTumbler: React.FC<SymbolTumblerProps> = ({ symbols, label, ch
     label={label}
     searchable
     clearable
+    limit={20}
     onChange={changeHandler}
   />);
 }

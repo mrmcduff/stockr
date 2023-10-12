@@ -8,6 +8,17 @@ export interface GraphTimeSeries {
   }[]
 }
 
+export interface TimeSeriesNestedDatum {
+  date: number;
+  values: {
+    [key: string]: number;
+  }
+  diffs?: {
+    [key: string]: { // diffs From ticker
+      [key: string]: number; // diffs to this ticker
+    }
+  }
+}
 export interface TimeSeriesDatum {
   date: number;
   [key: string]: number;
@@ -20,10 +31,19 @@ export interface DailyMultiResponse {
     color: string,
   }[]
 }
+
 export interface DailyMultiGraphData {
-    graphData: {
+  graphData: {
     symbol: string,
     data: TimeSeriesDatum[],
+    color: string,
+  }[]
+}
+
+export interface DailyMultiGraphDataNested {
+  graphData: {
+    symbol: string,
+    data: TimeSeriesNestedDatum[],
     color: string,
   }[]
 }
